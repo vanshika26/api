@@ -1,0 +1,103 @@
+<!-- <!DOCTYPE html>
+<html>
+<head>
+    <title>Test the Bard API</title>
+</head>
+<body>
+    <h1>Ask the Bard</h1>
+    <input type="text" id="questionInput" placeholder="Ask your question...">
+    <button onclick="getAnswerFromAPI()">Get Answer</button>
+    <div id="answer"></div>
+
+     <!-- xhr method works -->
+<!-- <script>
+        function getAnswerFromAPI() {
+            const question = document.getElementById('questionInput').value;
+            const xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        const response = JSON.parse(xhr.responseText);
+                        document.getElementById('answer').innerText = response.response;
+                    } else {
+                        console.error('Error fetching answer:', xhr.status, xhr.statusText);
+                    }
+                }
+            };
+            xhr.open('GET', `http://127.0.0.1:5000/get_answer?query=${encodeURIComponent(question)}`, true);
+            xhr.send();
+        }
+    </script> -->
+
+<!-- second method using fetch works -->
+<!-- <script>
+        function getAnswerFromAPI() {
+            const question = document.getElementById('questionInput').value;
+            
+            fetch(`http://127.0.0.1:5000/get_answer?query=${encodeURIComponent(question)}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    document.getElementById('answer').innerText = data.response;
+                })
+                .catch(error => {
+                    console.error('Error fetching answer:', error);
+                });
+        }
+    </script>
+</body>
+</html>  -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bard Web App</title>
+</head>
+<body>
+    <input type="text" id="questionInput" placeholder="Ask a question">
+    <button onclick="getAnswerFromAPI()">Get Answer</button>
+    <div id="answers"></div>
+
+    <script>
+        function getAnswerFromAPI() {
+            const question = document.getElementById('questionInput').value;
+            
+            fetch(`http://127.0.0.1:5000/get_answer?query=${encodeURIComponent(question)}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const choices = data.choices;
+
+                    if (choices.length > 0) {
+                        const contentList = choices[0].content; // Get content from the first choice
+
+                        const answersDiv = document.getElementById('answers');
+                        answersDiv.innerHTML = '';
+
+                        // Display the content from the first choice
+                        const contentElement = document.createElement('p');
+                        contentElement.innerText = contentList[0]; // Assuming the first choice contains a single content entry
+                        answersDiv.appendChild(contentElement);
+                    } else {
+                        // Handle the case when there are no choices in the response
+                        const answersDiv = document.getElementById('answers');
+                        answersDiv.innerHTML = 'No answer available for the given question.';
+                    }
+                })
+                .catch(error => {
+                    // Handle the error response for a null or empty query
+                    const answersDiv = document.getElementById('answers');
+                    answersDiv.innerHTML = 'Error: Invalid or empty query. Please enter a valid question.';
+                });
+        }
+    </script>
+</body>
+</html>
